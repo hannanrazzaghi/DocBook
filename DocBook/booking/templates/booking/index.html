@@ -1,0 +1,12 @@
+{% extends "booking/base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<body class="index">
+<div class="welcome">
+    <h1>Welcome to DocBook</h1>
+    <p>Your trusted platform for booking doctor appointments.</p>
+    <a href="{% url 'login' %}" class="btn-primary">Get Started</a>
+</div>
+</body>
+
+{% endblock %}

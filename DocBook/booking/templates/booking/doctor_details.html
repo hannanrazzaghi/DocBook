@@ -1,0 +1,36 @@
+{% extends "booking/base.html" %}
+{% load static %}
+
+{% block title %}Doctor Details{% endblock %}
+
+{% block content %}
+<div class="doctor-details-container">
+    <a href="{% url 'user_dashboard' %}" class="btn-back">
+        <span>&#8592;</span> Back to Dashboard
+    </a>
+
+    <div class="doctor-info">
+        <h2>Dr. {{ doctor.user.username }}</h2>
+        <p>Specialization: {{ doctor.get_specialization_display }}</p>
+    </div>
+
+    <div class="date-selection">
+        <label for="date-picker">Select Date:</label>
+        <input type="date" id="date-picker" required>
+        <button id="load-slots-btn" class="btn-primary">Load Slots</button>
+    </div>
+
+    <div class="slots-section">
+        <h3>Available Slots</h3>
+        <div id="slot-container" class="slot-container"></div>
+    </div>
+
+    <form id="appointment-form">
+        <input type="hidden" id="selected_time" name="selected_time">
+        <input type="hidden" id="doctor_id" name="doctor_id" value="{{ doctor.id }}">
+        <button type="submit" id="confirm-btn" class="btn btn-primary" disabled>Confirm Appointment</button>
+    </form>
+</div>
+
+<script src="{% static 'js/doctor_details.js' %}"></script>
+{% endblock %}

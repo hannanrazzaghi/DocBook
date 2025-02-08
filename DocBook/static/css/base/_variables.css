@@ -1,0 +1,16 @@
+:root {
+    /* Colors */
+    --primary-color: #007BFF;
+    --danger-color: #dc3545;
+    --success-color: #28a745;
+    --text-color: #333;
+    --background-color: #f8f9fa;
+
+    /* Spacing */
+    --spacing-unit: 1rem;
+    --border-radius: 4px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 8px 15px rgba(0, 0, 0, 0.1);
+}

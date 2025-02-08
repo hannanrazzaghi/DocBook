@@ -1,0 +1,154 @@
+{% extends "booking/base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<header>
+    <nav class="navbar">
+        <div class="navbar-left">
+            {% if user.is_authenticated %}
+                {% if user_role == 'doctor' %}
+                    <span class="username">Dr. {{ user.username }}</span>
+                {% else %}
+                    <span class="username">{{ user.username }}</span>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="navbar-center">
+            <span>My Dashboard</span>
+        </div>
+        <div class="navbar-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-login">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<div class="dashboard">
+    {% if user_role == 'patient' %}
+    <div class="search">
+        <h3 class="search-heading">Search for Doctors</h3>
+        <form method="get">
+            <input class="search-bar" type="text" name="q" placeholder="Search doctors by name or specialization..." required>
+            <button type="submit" class="btn-primary">Search</button>
+        </form>
+
+        {% if search_results %}
+            <table class="doctor-table">
+                <thead>
+                    <tr>
+                        <th>Doctor Name</th>
+                        <th>Specialization</th>
+                        <th>Location</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doctor in search_results %}
+                        <tr>
+                            <td>Dr. {{ doctor.user.username }}</td>
+                            <td>{{ doctor.get_specialization_display }}</td>
+                            <td>{{ doctor.location }}</td>
+                            <td><a href="{% url 'doctor_details' doctor.id %}" class="btn-primary">View Schedule</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color:red">No doctors found.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if user_role == 'doctor' %}
+    <div class="card">
+        <h3 class="appointments-heading">Manage Availability</h3>
+        <div class="date-selection">
+            <label for="date-picker">Select Date:</label>
+            <input type="date" id="date-picker" required>
+            <button id="make-unavailable-btn" class="btn">Make Day Unavailable</button>
+        </div>
+
+        <!-- Slot Duration Controls -->
+        <div class="date-selection">
+            <label for="date-picker">Select Slot Duration (minutes):</label>
+            <input type="number" id="slot-duration" min="5" max="60" value="15">
+            <button id="set-duration-btn" class="btn btn-primary">Set Duration</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="appointments-heading">Weekly Report</h3>
+        <table class="doctor-table">
+            <thead>
+                <tr>
+                    <th>Total Appointments This Week</th>
+                    <th>Average Daily Appointments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="total-appointments">Loading...</td>
+                    <td id="avg-daily-appointments">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <h3 class="appointments-heading">My Appointments</h3>
+        {% if appointments %}
+            <table class="doctor-table">
+                <thead>
+                    <tr>
+                        {% if user_role == 'patient' %}
+                            <th>Doctor Name</th>
+                        {% else %}
+                            <th>Patient Name</th>
+                        {% endif %}
+                        <th>Appointment Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                        <tr>
+                            {% if user_role == 'patient' %}
+                                <td>Dr. {{ appointment.doctor.user.username }}</td>
+                            {% else %}
+                                <td>{{ appointment.patient.user.username }}</td>
+                            {% endif %}
+                            <td>{{ appointment.date_time }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="color:red">No Appointments found.</p>
+        {% endif %}
+    </div>
+</div>
+    
+
+<footer>
+    <button id="ai-help-btn" class="ai-help-btn">Need AI help? Click Here</button>
+</footer>
+
+
+<div id="ai-modal" class="ai-modal hidden">
+    <div class="ai-modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>AI Doctor Recommendation</h3>
+        <textarea id="symptom-input" placeholder="Describe your symptoms and your approximate location..."></textarea>
+        <button id="get-recommendation-btn" class="ai-recommendation-btn">Get Recommendation</button>
+        <p id="ai-response" class="ai-response"></p>
+    </div>
+</div>
+
+<script src="{% static 'js/ai.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+
+{% endblock %}
